@@ -20,6 +20,11 @@ class etudiant(object):
          raise ValueError()
       self.niveau = value
     
+    def edit_etudiant(self,nom,prenom,niveau):
+        self.nom =nom
+        self.prenom = prenom
+        self.set_niveau(niveau)
+    
     def __repr__(self):
         return ("numero:"+self.numero+"\tnom:"+self.nom+"\tprenom:"+self.prenom+"\tniveau: "+self.niveau)
     
@@ -36,6 +41,10 @@ class cours(object):
       if value not in ('A', 'B', 'C'):
          raise ValueError()
       self.niveau = value
+      
+    def edit_cours(self,intitule,niveau):
+        self.intitule=intitule
+        self.set_niveau(niveau)
     
     def __repr__(self):
         return ("code:"+self.code+"\tintitule:"+self.intitule+"\tniveau: "+self.niveau)
@@ -47,7 +56,7 @@ class note(object):
             numEtudiant
             codeCours
         except ValueError:
-            print("eroor")
+            print("Course mark should be between 0 and 100")
         else:    
             self.numEtudiant = numEtudiant
             self.codeCours = codeCours
@@ -98,7 +107,45 @@ class BD(object):
                self.listCours.remove(x)
                print("cours ",num," has been deleted")
             break
-       
+    
+    def moyenne_classe(self,c):
+        n_sum= 0
+        n_count= 0
+        for n in self.listNotes:
+            if n.codeCours == c:
+                n_sum+= n.note
+                n_count+=1
+        return (n_sum/n_count)
+    
+    def moyenne_etudiant(self,e):
+        n_sum= 0
+        n_count= 0
+        for n in self.listNotes:
+            if n.numEtudiant == e:
+                n_sum+= n.note
+                n_count+=1
+        return (n_sum/n_count)
+    
+    def consulter_classnote(self,c):
+        print("notes class: ",c.code)
+        print("-----------------------")
+        print("Etudiant \tNote")
+        print("-----------------------")
+        for n in self.listNotes:
+            if n.codeCours == c.code:
+                print(n.numEtudiant,"\t",n.note)
+    
+    def consulter_etudianNote(self,e):
+        print("notes Etudiant: ",e.numero)
+        print("-----------------------")
+        print("Cours \tNote")
+        print("-----------------------")
+        for n in self.listNotes:
+            if n.numEtudiant == e.numero:
+                print(n.codeCours,"\t",n.note)
+    
+    
+    
     def __repr__(self):
         
             print (self.listEtudiant)
@@ -115,7 +162,9 @@ c2=cours("UTC503","Paradigme","B")
 print(c1)
 
 note_e1=note(e1.numero,c1.code,100)
-note_e2=note(e2.numero,c1.code,90)
+note_e1=note(e1.numero,c2.code,80)
+note_e2=note(e2.numero,c1.code,91)
+note_e2=note(e2.numero,c2.code,95)
 
 print(note_e1)
 print(note_e2)
@@ -125,9 +174,25 @@ print("lists before deletion")
 print(data.listNotes)
 print(data.listEtudiant)
 print(data.listCours)
+
+print("--------")
+print("moyenne class ",c1.code,":", data.moyenne_classe(c1.code))
+print("moyenne etudiant ",e1.numero,":", data.moyenne_etudiant(e1.numero))
+print("--------")
+
+data.consulter_classnote(c2)
+print("--------")
+data.consulter_etudianNote(e1)
+
+
+print("--------SupprimerNote---------------")
 #use studient ID
 data.supprimerEtudiant("1000")
+
 data.supprimerNote("1000","GDN100")
+
+
+
 print("--------")
 print("lists after deletion")
 print(data.listNotes)
